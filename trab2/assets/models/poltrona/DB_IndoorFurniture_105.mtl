@@ -1,0 +1,34 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 10.07.2013 19:39:07
+
+newmtl DB_IndoorFurniture_105_02
+	Ns 58.333332
+	Ni 1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 2.550000 2.550000 2.550000
+	Ke 0.000000 0.000000 0.000000
+	map_Kd DB_IndoorFurniture_105_01.jpg
+	map_Ks DB_IndoorFurniture_105_02.jpg
+	map_bump DB_IndoorFurniture_105_02.jpg
+	bump DB_IndoorFurniture_105_02.jpg
+	map_refl DB_IndoorFurniture_105_02.jpg
+
+newmtl DB_IndoorFurniture_105_03
+	Ns 83.333328
+	Ni 1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 0.000000 0.000000 0.000000
+	Ke 0.000000 0.000000 0.000000
+	map_Kd DB_IndoorFurniture_105_05.jpg
+	map_bump DB_IndoorFurniture_105_03.jpg
+	bump DB_IndoorFurniture_105_03.jpg
