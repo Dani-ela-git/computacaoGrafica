@@ -39,7 +39,7 @@ class Cena:
         self.mostrar_malha = False
         self._criar_estrutura()
         self.carregar_modelos()
-        self._criar_ceu()
+        self.criar_ceu()
 
     # ------------------------------------------------------------ montagem
     def estatico(self, vertices, chave_textura):
@@ -116,6 +116,32 @@ class Cena:
         glUniform1i(glGetUniformLocation(self.programa, "modo_malha"), int(self.mostrar_malha))
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE if self.mostrar_malha else GL_FILL)
 
+        # ---- DEBUG ----
+        if not hasattr(self, "_printou"):
+            self._printou = True
+            print("=== ESTRUTURA ===")
+            for i, obj in enumerate(self.estrutura):
+                m = obj.mesh
+                print(f"  [{i}] VAO={m.VAO} partes={len(m.partes)} "
+                      f"qtd_idx={m.partes[0][1] if m.partes else 0} "
+                      f"pos={tuple(obj.posicao)}")
+            print("=== MODELOS ===")
+            for nome, lista in self.modelos.items():
+                for obj in lista:
+                    m = obj.mesh
+                    print(f"  {nome}: VAO={m.VAO} partes={len(m.partes)} "
+                          f"qtd_idx={m.partes[0][1] if m.partes else 0}")
+            # matrizes da câmera
+            print("=== CÂMERA ===")
+            print(f"  view[3] (pos): {glm.vec3(view[3])}")
+            # escolhe um objeto da estrutura (o convés = índice 0) e mostra
+            # o resultado da multiplicação view*model*posição de um vértice
+            conv = self.estrutura[0]
+            proj = projection
+            mvp = proj * view * conv.matriz_model()
+            print(f"  MVP do convés:\n{mvp}")
+        # ---- FIM DEBUG ----
+        
         for obj in self.estrutura:
             obj.desenhar(view, projection)
         for lista in self.modelos.values():

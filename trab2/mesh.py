@@ -39,12 +39,17 @@ class Mesh:
 
     @classmethod
     def de_vertices(cls, vertices, textura_path, shader_program):
-        """Cria uma Mesh a partir de vértices gerados no código (pisos, paredes...)."""
+        """Cria uma Mesh a partir de vértices gerados no código."""
         malha = cls.__new__(cls)
         malha.program = shader_program
         malha.model = glm.mat4(1.0)
-        malha.vertices = np.ascontiguousarray(vertices, dtype=np.float32).ravel()
-        malha.indices = np.arange(len(vertices) // 5, dtype=np.uint32)
+
+        vertices = np.asarray(vertices, dtype=np.float32)
+        # se veio 2D (n, 5), achata pra 1D (n*5,)
+        malha.vertices = np.ascontiguousarray(vertices).ravel()
+        # número de vértices = total de floats / 5
+        malha.indices = np.arange(len(malha.vertices) // 5, dtype=np.uint32)
+
         malha.montar([(malha.vertices, malha.indices, textura_path)])
         return malha
 

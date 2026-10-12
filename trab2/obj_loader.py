@@ -145,8 +145,11 @@ def carregar_obj_por_material(caminho_arquivo):
     grupos = {}
     for face, material in faces:
         grupos.setdefault(material, []).append(face)
-    return [(montar(posicoes, textcoord, lista), materiais.get(mat))
-            for mat, lista in grupos.items()]
+    resultado = []
+    for mat, lista in grupos.items():
+        vertices, indices = montar(posicoes, textcoord, lista)
+        resultado.append((vertices, indices, materiais.get(mat)))
+    return resultado
     
 #### função de rotação 
 def _rotacao(graus_x, graus_y, graus_z):
@@ -165,7 +168,7 @@ def normalizar(lista_vertices, altura=None, comprimento=None, giro_base=(0, 0, 0
       3) redimensiona para a altura OU o comprimento horizontal desejado.
     Altera os arrays no lugar. lista_vertices = arrays [x,y,z,u,v] achatados."""
     
-    giro = _rotacao(giro_base)
+    giro = _rotacao(*giro_base)
     blocos = [v.reshape(-1, 5) for v in lista_vertices]
     todos = np.vstack([b[:, :3] for b in blocos]) @ giro.T
     minimo, maximo = todos.min(axis=0), todos.max(axis=0)

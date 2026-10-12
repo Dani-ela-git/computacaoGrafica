@@ -135,6 +135,7 @@ glfw.set_input_mode(window, glfw.CURSOR, glfw.CURSOR_DISABLED)
 # ------------------------------------------------------------- loop
 glfw.show_window(window)
 glEnable(GL_DEPTH_TEST)
+glDisable(GL_CULL_FACE)
 glClearColor(0.02, 0.03, 0.08, 1.0)
 
 ultimo_frame = glfw.get_time()     # deltaTime, como nas aulas
