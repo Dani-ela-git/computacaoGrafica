@@ -41,31 +41,46 @@ class Cena:
         self.carregar_modelos()
         self.criar_ceu()
 
-    # ------------------------------------------------------------ montagem
+    # montagem
+    
     def estatico(self, vertices, chave_textura):
         """Objeto gerado por código (não conta entre os modelos .obj)."""
         return Objeto(Mesh.de_vertices(vertices, cfg.TEXTURAS[chave_textura], self.programa))
 
-        def _criar_estrutura(self):
-        """Navio e oceano, gerados por código (delimitam os ambientes;
-        não contam entre os modelos .obj). O último número de cada plano
-        é a cada quantos metros a textura se repete (escala real)."""
+    def _criar_estrutura(self):
         c, cab = cfg.CONVES, cfg.CABINE
         meio = cfg.TAMANHO_OCEANO / 2
+        sup = cfg.SUPERESTRUTURA
+        cha = cfg.CHAMINES
+
+        # chaminés (um mesh por chaminé e empilhadas)
+        chamines = []
+        for x in cha["posicoes_x"]:
+            verts = geo.cilindro(x, cha["z"], cha["y_base"], cha["altura"], cha["raio"])
+            chamines.append(verts)
+
         self.estrutura = [
-            # piso EXTERNO: convés de madeira (~1,8 m por repetição)
-            self.estatico(geo.plano(c["x_min"], c["x_max"], c["z_min"], c["z_max"], 0.0, 1.8), "conves"),
-            # oceano em volta do navio
-            self.estatico(geo.plano(-meio, meio, -meio, meio, cfg.NIVEL_OCEANO, 6.0), "oceano"),
-            # laterais do navio, do nível do mar até a amurada
+            # --- EXTERNO ---
+            self.estatico(geo.plano(-meio, meio, -meio, meio, cfg.NIVEL_OCEANO, 40.0), "oceano"),
+            self.estatico(geo.conves_afilado( c["x_min"], c["x_max"], c["z_min"], c["z_max"],
+            0.0, 1.8, fator_proa=0.25, extensao_proa=8.0, fator_popa=0.25, extensao_popa=6.0), "conves"),
             self.estatico(geo.casco(c, cfg.NIVEL_OCEANO, cfg.ALTURA_AMURADA), "casco"),
-            # piso INTERNO: carpete (~40 cm por repetição), 2 cm acima do convés
+
+            # --- superestrutura (bloco externo em cima do convés) ---
+            self.estatico(geo.superestrutura(
+                sup["x_min"], sup["x_max"], sup["z_min"], sup["z_max"],
+                sup["y_base"], sup["altura"]
+            ), "superestrutura"),
+
+            # --- CHAMINÉS (4 cilindros) ---
+            self.estatico(np.vstack(chamines), "chamines"),
+
+            # --- INTERNO (cabine) ---
             self.estatico(geo.plano(cab["x_min"], cab["x_max"], cab["z_min"], cab["z_max"], 0.02, 0.4), "carpete"),
-            # paredes da cabine (com vão de porta) e teto
             self.estatico(geo.paredes_cabine(cab), "parede"),
             self.estatico(geo.plano(cab["x_min"], cab["x_max"], cab["z_min"], cab["z_max"], cab["altura"], 2.0), "teto"),
-        ]
-
+    ]
+    
     def carregar_modelos(self):
         """Carrega cada .obj em tamanho real e cria as instâncias."""
         self.modelos = {}      # nome -> lista de Objeto
@@ -92,7 +107,7 @@ class Cena:
         glEnableVertexAttribArray(0)
         glBindVertexArray(0)
 
-    # ------------------------------------------------------ transformações
+    #  transformações
     def transladar(self, dx, dz):
         """TRANSLAÇÃO: move o iceberg pelo oceano."""
         lim = cfg.LIMITES_ICEBERG
@@ -115,40 +130,13 @@ class Cena:
     def alternar_malha(self):
         self.mostrar_malha = not self.mostrar_malha
 
-    # --------------------------------------------------------------- desenho
+    # desenho
     def desenhar(self, view, projection):
         # objetos: preenchidos ou só as arestas (tecla 'p')
         glUseProgram(self.programa)
         glUniform1i(glGetUniformLocation(self.programa, "modo_malha"), int(self.mostrar_malha))
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE if self.mostrar_malha else GL_FILL)
-        #glClearColor(1.0, 0.0, 0.0, 1.0)   # vermelho vivo
-        #glClear(GL_COLOR_BUFFER_BIT)       # limpa só a cor
 
-        # ---- DEBUG ----
-        #if not hasattr(self, "_printou"):
-            # self._printou = True
-            # print("=== ESTRUTURA ===")
-            # for i, obj in enumerate(self.estrutura):
-            #     m = obj.mesh
-            #     print(f"  [{i}] VAO={m.VAO} partes={len(m.partes)} "
-            #           f"qtd_idx={m.partes[0][1] if m.partes else 0} "
-            #           f"pos={tuple(obj.posicao)}")
-            # print("=== MODELOS ===")
-            # for nome, lista in self.modelos.items():
-            #     for obj in lista:
-            #         m = obj.mesh
-            #         print(f"  {nome}: VAO={m.VAO} partes={len(m.partes)} "
-            #               f"qtd_idx={m.partes[0][1] if m.partes else 0}")
-            # # matrizes da câmera
-            # print("=== CÂMERA ===")
-            # print(f"  view[3] (pos): {glm.vec3(view[3])}")
-            # # escolhe um objeto da estrutura (o convés = índice 0) e mostra
-            # # o resultado da multiplicação view*model*posição de um vértice
-            # conv = self.estrutura[0]
-            # proj = projection
-            # mvp = proj * view * conv.matriz_model()
-            # print(f"  MVP do convés:\n{mvp}")
-        # ---- FIM DEBUG ----
         
         for obj in self.estrutura:
             obj.desenhar(view, projection)

@@ -138,7 +138,7 @@ glEnable(GL_DEPTH_TEST)
 glDisable(GL_CULL_FACE)
 glClearColor(0.02, 0.03, 0.08, 1.0)
 
-ultimo_frame = glfw.get_time()     # deltaTime, como nas aulas
+ultimo_frame = glfw.get_time()     # deltaTime, co mo nas aulas
 while not glfw.window_should_close(window):
     agora = glfw.get_time()
     dt = min(agora - ultimo_frame, 0.1)

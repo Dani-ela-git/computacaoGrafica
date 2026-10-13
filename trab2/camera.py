@@ -13,7 +13,7 @@ CIMA = glm.vec3(0.0, 1.0, 0.0)
 class Camera:
     def __init__(self):
         self.posicao = glm.vec3(*cfg.POSICAO_INICIAL)
-        self.yaw = -90.0      # olhando para -Z
+        self.yaw = -135.0      # olhando para -Z
         self.pitch = 0.0
         self.fov = cfg.FOV    # alterado pela roda do mouse (zoom)
 

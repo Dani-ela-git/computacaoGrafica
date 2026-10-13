@@ -13,10 +13,7 @@ newmtl DB_IndoorFurniture_105_02
 	Ks 2.550000 2.550000 2.550000
 	Ke 0.000000 0.000000 0.000000
 	map_Kd DB_IndoorFurniture_105_01.jpg
-	map_Ks DB_IndoorFurniture_105_02.jpg
-	map_bump DB_IndoorFurniture_105_02.jpg
-	bump DB_IndoorFurniture_105_02.jpg
-	map_refl DB_IndoorFurniture_105_02.jpg
+	map_Ks DB_IndoorFurniture_105_01.jpg
 
 newmtl DB_IndoorFurniture_105_03
 	Ns 83.333328
@@ -30,5 +27,3 @@ newmtl DB_IndoorFurniture_105_03
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
 	map_Kd DB_IndoorFurniture_105_05.jpg
-	map_bump DB_IndoorFurniture_105_03.jpg
-	bump DB_IndoorFurniture_105_03.jpg
