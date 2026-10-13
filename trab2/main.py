@@ -61,11 +61,15 @@ cena = Cena(program, program_ceu)
 
 # ------------------------------------------------------------- eventos
 def key_event(window, key, scancode, action, mods):
-    """Teclas de 'um toque' (só no momento em que são pressionadas)."""
     if action != glfw.PRESS:
         return
     if key == glfw.KEY_ESCAPE:
-        glfw.set_window_should_close(window, True)
+        # se o cursor está travado, libera; se está livre, fecha a janela
+        modo = glfw.get_input_mode(window, glfw.CURSOR)
+        if modo == glfw.CURSOR_DISABLED:
+            glfw.set_input_mode(window, glfw.CURSOR, glfw.CURSOR_NORMAL)
+        else:
+            glfw.set_window_should_close(window, True)
     elif key == glfw.KEY_P:
         cena.alternar_malha()
 
@@ -102,7 +106,6 @@ def teclas_continuas(dt):
     if apertada(glfw.KEY_LEFT_CONTROL): d.y -= 1.0
     if glm.length(d) > 0:
         camera.mover(glm.normalize(d) * vel)
-
     giro = 90.0 * dt
     if apertada(glfw.KEY_LEFT):  camera.girar(-giro, 0)
     if apertada(glfw.KEY_RIGHT): camera.girar(giro, 0)
