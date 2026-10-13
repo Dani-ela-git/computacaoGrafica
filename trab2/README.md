@@ -1,8 +1,7 @@
 # Titanic, 14 de abril de 1912 — Projeto 2 (SCC0250)
 
 Cena 3D em OpenGL moderno (Python + GLFW + PyOpenGL + PyGLM). O usuário começa
-no convés do Titanic à noite, pode entrar na cabine de primeira classe e
-controlar o iceberg que se aproxima.
+na cabine e consegue andar pela cena.
 
 ## Como rodar
 
