@@ -44,6 +44,7 @@ def carregar_textura(caminho_arquivo):
     glGenerateMipmap(GL_TEXTURE_2D)
 
     glBindTexture(GL_TEXTURE_2D, 0)
+    cache[caminho_arquivo] = tex_id      # guarda para não subir a mesma imagem de novo
     return tex_id
 
 def textura_xadrez():
@@ -62,7 +63,7 @@ def textura_xadrez():
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE, dados)
     glBindTexture(GL_TEXTURE_2D, 0)
-    cache["__xadrez__"] = tex_id
+    cache["xadrez"] = tex_id
 
     return tex_id
 
