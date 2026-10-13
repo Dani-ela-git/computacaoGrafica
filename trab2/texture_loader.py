@@ -5,7 +5,7 @@ from OpenGL.GL import *
 import numpy as np
 import os
 
-_cache = {} #apenas para evitar subir a mesma imagem para a GPU duas vezes
+cache = {} #apenas para evitar subir a mesma imagem para a GPU duas vezes
 
 
 def carregar_textura(caminho_arquivo):
@@ -14,8 +14,8 @@ def carregar_textura(caminho_arquivo):
     Retorna o ID da textura do OpenGL.
     """
 
-    if caminho_arquivo in _cache:
-        return _cache[caminho_arquivo]
+    if caminho_arquivo in cache:
+        return cache[caminho_arquivo]
     if not caminho_arquivo or not os.path.isfile(caminho_arquivo):
         print(f"  [aviso] textura não encontrada: {caminho_arquivo} (usando xadrez)")
         return textura_xadrez()
@@ -49,8 +49,8 @@ def carregar_textura(caminho_arquivo):
 def textura_xadrez():
     """Textura de erro. Apenas para facilitar vizualizar se as texturas foram carregadas"""
 
-    if "xadrez" in __cached__:
-        return _cache["xadrez"]
+    if "xadrez" in cache:
+        return cache["xadrez"]
     dados = np.zeros((8,8,4), dtype=np.uint8)
     for x in range(8):
         for y in range(8):
@@ -62,7 +62,7 @@ def textura_xadrez():
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE, dados)
     glBindTexture(GL_TEXTURE_2D, 0)
-    _cache["__xadrez__"] = tex_id
+    cache["__xadrez__"] = tex_id
 
     return tex_id
 

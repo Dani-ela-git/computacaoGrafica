@@ -45,7 +45,8 @@ uniform mat4 view;
 
 void main() {
     texCoords = aPos;
-    gl_Position = projection * view * vec4(aPos, 1.0);
+    vec4 pos = projection * view * vec4(aPos, 1.0);
+    gl_Position = pos.xyww;  //tivemos que forçar o skybox a ter z = w para arrumar a profundidade
 }
 """
 

@@ -47,18 +47,14 @@ class Cena:
         return Objeto(Mesh.de_vertices(vertices, cfg.TEXTURAS[chave_textura], self.programa))
 
     def _criar_estrutura(self):
-        c, cab = cfg.CONVES, cfg.CABINE
-        meio = cfg.TAMANHO_OCEANO / 2
+        c = cfg.CONVES
         self.estrutura = [
-            # piso externo (madeira do convés) e oceano ao redor
-            self.estatico(geo.plano(c["x_min"], c["x_max"], c["z_min"], c["z_max"], 0.0, 1.8), "conves"),  
-            self.estatico(geo.plano(-meio, meio, -meio, meio, cfg.NIVEL_OCEANO, 6.0), "oceano"),
-            self.estatico(geo.casco(c, cfg.NIVEL_OCEANO, cfg.ALTURA_AMURADA), "casco"),
-            # piso interno (carpete), 2 cm acima do convés para não "brigar" no z-buffer
-            self.estatico(geo.plano(cab["x_min"], cab["x_max"], cab["z_min"], cab["z_max"], 0.02, 0.4), "carpete"),   
-            self.estatico(geo.paredes_cabine(cab), "parede"),
-            self.estatico(geo.plano(cab["x_min"], cab["x_max"], cab["z_min"], cab["z_max"], cab["altura"], 2.0), "teto"),
-        ]
+            # um quad vertical em z=0, olhando pra +Z, entre x=-5 e 5, y=0 e 5
+            self.estatico(
+            geo.quad((-5, 0, 0), (5, 0, 0), (5, 5, 0), (-5, 5, 0)),
+            "conves"
+        ),
+    ]
 
     def carregar_modelos(self):
         """Carrega cada .obj em tamanho real e cria as instâncias."""
@@ -115,6 +111,8 @@ class Cena:
         glUseProgram(self.programa)
         glUniform1i(glGetUniformLocation(self.programa, "modo_malha"), int(self.mostrar_malha))
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE if self.mostrar_malha else GL_FILL)
+        glClearColor(1.0, 0.0, 0.0, 1.0)   # vermelho vivo
+        glClear(GL_COLOR_BUFFER_BIT)       # limpa só a cor
 
         # ---- DEBUG ----
         if not hasattr(self, "_printou"):
@@ -147,12 +145,13 @@ class Cena:
         for lista in self.modelos.values():
             for obj in lista:
                 obj.desenhar(view, projection)
-
-        # céu por último, sempre preenchido e atrás de tudo
+                
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
         glDepthFunc(GL_LEQUAL)
+        glDepthMask(GL_FALSE)   # ← não escreve no depth buffer
+        
         glUseProgram(self.programa_ceu)
-        view_sem_translacao = glm.mat4(glm.mat3(view))   # remove a translação da câmera
+        view_sem_translacao = glm.mat4(glm.mat3(view))
         glUniformMatrix4fv(glGetUniformLocation(self.programa_ceu, "view"), 1, GL_FALSE,
                            glm.value_ptr(view_sem_translacao))
         glUniformMatrix4fv(glGetUniformLocation(self.programa_ceu, "projection"), 1, GL_FALSE,
@@ -163,4 +162,6 @@ class Cena:
         glBindVertexArray(self.vao_ceu)
         glDrawArrays(GL_TRIANGLES, 0, 36)
         glBindVertexArray(0)
+        
+        glDepthMask(GL_TRUE)   # ← restaura
         glDepthFunc(GL_LESS)
